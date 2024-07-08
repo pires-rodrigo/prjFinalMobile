@@ -1,3 +1,5 @@
+import shadow.bundletool.com.android.tools.r8.internal.id
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")

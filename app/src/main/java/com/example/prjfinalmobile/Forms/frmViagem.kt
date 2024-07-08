@@ -24,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,12 +35,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.prjfinalmobile.Class.TipoViagem
 import com.example.prjfinalmobile.Class.Viagem
+import com.example.prjfinalmobile.DataBase.SystemDataBase
 import com.example.prjfinalmobile.R
+import com.example.prjfinalmobile.Viewmodel.ViagemViewModel
+import com.example.prjfinalmobile.Viewmodel.ViagemViewModelFatory
 import java.util.Date
 
 fun frmViagemList(){
@@ -47,46 +55,53 @@ fun frmViagemList(){
 
 @Composable
 fun frmViagem(){
-    val list = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        listOf(
-            Viagem(1, "África", TipoViagem.Lazer, Date(20240503), Date(20240503), 2000f),
-            Viagem(1, "EUA", TipoViagem.Negocio, Date(20240503),Date(20240603), 3500f),
-            Viagem(1, "Canada", TipoViagem.Negocio, Date(20240503),Date(20240703), 3500f),
-            Viagem(1, "França", TipoViagem.Lazer,  Date(20240503),Date(20240803) , 2000f),
-        )
-    } else {
-        TODO("VERSION.SDK_INT < O")
-    }
+    val context = LocalContext.current
+    val db = SystemDataBase.getDataBase(context)
+    val viagemViewModel: ViagemViewModel = viewModel(
+        factory = ViagemViewModelFatory(db)
+    )
+    val ListaViagens = viagemViewModel.viagemDao.getAll().collectAsState(initial = emptyList())
 
     val navController = rememberNavController()
+    val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
+    val showFab = currentBackStackEntry?.destination?.route == "dest"
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate("cadastroViagens")
-            }) {
-                Icon(imageVector = Icons.Default.Add,
-                    contentDescription = null)
+            if (showFab){
+                FloatingActionButton(onClick = {
+                    navController.navigate("frmCadastrarViagem/${-1L}")
+                }) {
+                    Icon(imageVector = Icons.Default.Add,
+                        contentDescription = null)
+                }
             }
         }
-    ) {
+    ) {it ->
         Column(modifier = Modifier.padding(it)) {
             NavHost(
                 navController = navController,
-                startDestination = "dest"
+                startDestination = "frmViagemList"
             ) {
-
-                composable("frmcadastroViagens") {
+                composable("frmCadastrarViagem/{viagemId}",
+                    arguments = listOf(navArgument("viagemId") { type = NavType.LongType; defaultValue = -1L })) { backStackEntry ->
+                    val viagemId = backStackEntry.arguments?.getLong("viagemId")
                     frmCadViagens(
-                        onBack = {navController.navigateUp()}
+                        onBack = {navController.navigateUp()},
+                        viagemId = if (viagemId != -1L) viagemId else null
                     )
                 }
-                composable("frmViagemList") {
+                composable("dest") {
                     frmViagemList()
                 }
             }
             LazyColumn {
-                items(items = list){
-                    ViagemCard(it)
+                items(items = ListaViagens.value){
+                    ViagemCard(it, onDelete = {
+                        viagemViewModel.delete(it)
+                    },
+                        onEdit = {
+                            navController.navigate("cadastroViagens/${it.id}")
+                        })
                 }
             }
         }
@@ -95,7 +110,7 @@ fun frmViagem(){
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ViagemCard(v: Viagem){
+fun ViagemCard(loViagem: Viagem, onDelete: () -> Unit, onEdit: () -> Unit){
     val ctx = LocalContext.current
     Card(elevation = CardDefaults.cardElevation(
         defaultElevation = 6.dp
@@ -106,29 +121,17 @@ fun ViagemCard(v: Viagem){
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    Toast
-                        .makeText(
-                            ctx,
-                            "Destino: ${v.destino}",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
+                    onEdit()
                 },
                 onLongClick = {
-                    Toast
-                        .makeText(
-                            ctx,
-                            "Destino: ${v.destino}, ${v.dtIni} - ${v.dtFim}",
-                            Toast.LENGTH_LONG
-                        )
-                        .show()
+                    onDelete()
                 }
             )
     ) {
         Row(modifier = Modifier.padding(4.dp)) {
-            if (v.tipo == TipoViagem.Negocio){
+            if (loViagem.tipo == TipoViagem.Negocio){
                 Image(
-                    painter = painterResource(id = R.drawable.visiblee),
+                    painter = painterResource(id = R.drawable.negocio),
                     contentDescription = "Negócio",
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
@@ -140,7 +143,7 @@ fun ViagemCard(v: Viagem){
                 )
             }else{
                 Image(
-                    painter = painterResource(id = R.drawable.nonvisible),
+                    painter = painterResource(id = R.drawable.lazer),
                     contentDescription = "Lazer",
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
@@ -153,12 +156,12 @@ fun ViagemCard(v: Viagem){
             }
 
             Column {
-                Text(text = "Destino: ${v.destino}", fontSize = 25.sp, style = MaterialTheme.typography.titleLarge)
+                Text(text = "Destino: ${loViagem.destino}", fontSize = 25.sp, style = MaterialTheme.typography.titleLarge)
                 Row{
-                    Text(text = "${v.dtIni} - ${v.dtFim}")
+                    Text(text = "${loViagem.dtIni?.time?.toBrazilianDateFormat()} - ${loViagem.dtFim?.time?.toBrazilianDateFormat()}")
                 }
                 Row{
-                    Text(text = "Orçamento: R$ ${v.orcamento}")
+                    Text(text = "Orçamento: R$ ${loViagem.orcamento}")
                 }
             }
         }

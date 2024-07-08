@@ -15,6 +15,6 @@ data class Viagem(
     val tipo: TipoViagem = TipoViagem.Lazer,
     val dtIni: Date? = null,
     val dtFim: Date? = null,
-    val orcamento: Float = 0.00f
+    val orcamento: Float? = null
     ){
 }

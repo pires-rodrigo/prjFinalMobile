@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class ViagemViewModelFatory(val db: SystemDataBase) : ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -38,13 +39,13 @@ class ViagemViewModel(val viagemDao: ViagemDao): ViewModel() {
         }
     }
 
-    fun updateInicio(dtini: Long){
+    fun updateDtIni(dtini: Date?){
         _uiState.update {
             it.copy(dtIni = dtini)
         }
     }
 
-    fun updateFim(dtfim: Long){
+    fun updateDtFim(dtfim: Date?){
         _uiState.update {
             it.copy(dtFim = dtfim)
         }
@@ -71,10 +72,27 @@ class ViagemViewModel(val viagemDao: ViagemDao): ViewModel() {
         }
     }
 
+    fun delete(viagem: Viagem){
+        viewModelScope.launch {
+            viagemDao.delete(viagem)
+        }
+    }
+
     suspend fun findById(id: Long): Viagem? {
         val deferred : Deferred<Viagem?> = viewModelScope.async {
             viagemDao.findByid(id)
         }
         return deferred.await()
+    }
+
+    fun setUiState(viagem: Viagem) {
+        _uiState.value = uiState.value.copy(
+            id = viagem.id,
+            destino = viagem.destino,
+            tipo = viagem.tipo,
+            dtIni = viagem.dtIni,
+            dtFim = viagem.dtFim,
+            orcamento = viagem.orcamento
+        )
     }
 }

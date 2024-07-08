@@ -4,12 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.prjfinalmobile.Class.Usuario
 import com.example.prjfinalmobile.Class.Viagem
+import com.example.prjfinalmobile.ClassDao.UsuarioDao
 import com.example.prjfinalmobile.ClassDao.ViagemDao
+import com.example.prjfinalmobile.Converters.ConvertTypes
 
-@Database(entities = [Viagem::class], version = 1, exportSchema = false)
+@Database(entities = [Viagem::class, Usuario::class], version = 1, exportSchema = false)
+@TypeConverters(ConvertTypes::class)
 abstract class SystemDataBase : RoomDatabase() {
+
     abstract val viagemDao:ViagemDao
+    abstract val usuarioDao:UsuarioDao
 
     companion object{
         @Volatile

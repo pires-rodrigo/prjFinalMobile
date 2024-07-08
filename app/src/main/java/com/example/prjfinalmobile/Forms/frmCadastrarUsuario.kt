@@ -31,9 +31,9 @@ fun frmCadastrarUsuario(
 
     ) {
 
-        val loginState = usuViewModel.uiState.collectAsState()
-        val passState = usuViewModel.uiState.collectAsState()
-        val emailState = usuViewModel.uiState.collectAsState()
+        val loginState = usuViewModel.usuState.collectAsState()
+        val passState = usuViewModel.usuState.collectAsState()
+        val emailState = usuViewModel.usuState.collectAsState()
 
 
         Row {

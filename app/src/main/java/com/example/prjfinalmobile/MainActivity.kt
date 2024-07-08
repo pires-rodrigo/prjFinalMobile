@@ -36,48 +36,33 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun myApp(){
+fun myApp() {
 
     val navController = rememberNavController()
 
-        NavHost(navController = navController,
-                startDestination = "frmLogin"
-        ){
-            composable("frmLogin"){
-                frmLogin (onCadastrarUsuario = {
-                            navController.navigate("frmCadastrarUsuario")
-                },
+    NavHost(
+        navController = navController,
+        startDestination = "frmLogin"
+    ) {
+        composable("frmLogin") {
+            frmLogin(onCadastrarUsuario = {
+                navController.navigate("frmCadastrarUsuario")
+            },
                 onLogin = {
-                    navController.navigate("frmMenu")
-               })
-            }
-
-            composable("frmcadastrarUsuario"){
-                frmCadastrarUsuario(onBack = {navController.navigateUp()})
-            }
-
-            composable("frmMenu"){
-                frmMenu(onBack = {
-                    navController.navigateUp()
+                    navController.navigate("frmMenu/${it}")
                 })
+        }
+
+        composable("frmcadastrarUsuario") {
+            frmCadastrarUsuario(onBack = { navController.navigateUp() })
+        }
+
+        composable("frmMenu/{id}") { backStackEntry ->
+            backStackEntry.arguments?.getString("id")?.let {
+                frmMenu(it)
             }
         }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PrjFinalMobileTheme {
-        Greeting("Android")
     }
 }
