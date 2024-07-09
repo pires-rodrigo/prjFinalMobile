@@ -21,12 +21,12 @@ interface ViagemDao {
     suspend fun upsert(viagem: Viagem) : Long
 
     @Delete
-    fun delete(viagem: Viagem)
+    suspend fun delete(viagem: Viagem)
 
     @Query("SELECT * FROM Viagem ORDER BY id DESC")
     fun getAll() : Flow<List<Viagem>>
 
-    @Query("SELECT * FROM Viagem v WHERE v.id = :id")
-    fun findByid(id: Long) : Viagem?
+    @Query("SELECT * FROM Viagem V  WHERE V.id = :id")
+    suspend fun findByid(id: Long) : Viagem?
 
 }

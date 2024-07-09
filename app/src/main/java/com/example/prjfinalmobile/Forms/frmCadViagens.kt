@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,6 +51,14 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
         val viagemViewModel: ViagemViewModel = viewModel(
             factory = ViagemViewModelFatory(db)
         )
+
+        LaunchedEffect(viagemId) {
+            if (viagemId != null){
+                val viagem =  viagemViewModel.findById(viagemId)
+                viagem?.let { viagemViewModel.setUiState(viagem) }
+            }
+        }
+
         val state = viagemViewModel.uiState.collectAsState()
 
         val showDatePickerDialogInicio = remember { mutableStateOf(false) }

@@ -3,7 +3,6 @@ package com.example.prjfinalmobile.Viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prjfinalmobile.Class.TipoViagem
 import com.example.prjfinalmobile.Class.Viagem
 import com.example.prjfinalmobile.ClassDao.ViagemDao
