@@ -42,17 +42,17 @@ import kotlinx.coroutines.launch
 fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit){
 
     val snackbarHostState = remember {
-        SnackbarHostState()
+        SnackbarHostState() // Estado do Snackbar
     }
 
-    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope() // Escopo de corrotinas
 
-    val focus = LocalFocusManager.current
+    val focus = LocalFocusManager.current // Gerenciador de foco
 
 
     androidx.compose.material3.Scaffold(
         snackbarHost = {
-            SnackbarHost(snackbarHostState)
+            SnackbarHost(snackbarHostState) // Hospedagem do Snackbar
         }
     ) { it ->
         Column(
@@ -75,8 +75,8 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit){
                 contentDescription = "Cabana",
                 alignment = Alignment.Center,
                 modifier = Modifier
-                    .size(350.dp)
-                    .fillMaxWidth()
+                    .size(350.dp)  //tamanho da imagem
+                    .fillMaxWidth() //largura
                     .padding(top = 0.dp, start = 15.dp)
             )
 
@@ -104,7 +104,7 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit){
 
             )
 
-            val visible = remember { mutableStateOf(true) }
+            val visible = remember { mutableStateOf(true) } // Estado de visibilidade da senha
 
             OutlinedTextField(
                 value = passState.value.senha,
@@ -113,9 +113,9 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit){
                     Text(text = "Senha")
                 },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password
+                    keyboardType = KeyboardType.Password // Tipo de teclado para senha
                 ),
-                visualTransformation =
+                visualTransformation =  //metodo para verificar se deixa a senha visível ou invisivel
                 if (visible.value)
                     VisualTransformation.None
                 else
@@ -149,7 +149,7 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit){
                         )
 
                         if (pass != null) {
-                            onLogin(pass.toString())
+                            onLogin(pass.toString()) // Chamar callback de login
                         } else {
                             coroutineScope.launch {
                                 focus.clearFocus()
@@ -172,7 +172,7 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit){
             }
 
             Button(
-                onClick = { onCadastrarUsuario() },
+                onClick = { onCadastrarUsuario() }, // Chamar callback de cadastrar usuário
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp)

@@ -61,13 +61,13 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
 
         val state = viagemViewModel.uiState.collectAsState()
 
-        val showDatePickerDialogInicio = remember { mutableStateOf(false) }
-        val datePickerStateInicio =
-            remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) }
+        val showDatePickerDialogDtIni = remember { mutableStateOf(false) }  // Controle de exibição do DatePicker de data inicio
+        val datePickerStateDtIni =
+            remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) } // Estado do DatePicker de data inicio
 
-        val showDatePickerDialogFinal = remember { mutableStateOf(false) }
-        val datePickerStateFinal =
-            remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) }
+        val showDatePickerDialogDtFim = remember { mutableStateOf(false) }  // Controle de exibição do DatePicker de data final
+        val datePickerStateDtFim =
+            remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) } // Estado do DatePicker de data final
 
         Column(
             modifier = Modifier
@@ -110,8 +110,8 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = state.value.tipo == TipoViagem.Lazer,
-                    onClick = { viagemViewModel.updateTipo(TipoViagem.Lazer) },
+                    selected = state.value.tipo == TipoViagem.Lazer, // Verificar se o tipo selecionado é Lazer
+                    onClick = { viagemViewModel.updateTipo(TipoViagem.Lazer) }, // Atualizar o tipo para Lazer
                     modifier = Modifier
                         .weight(0.5f)
                 )
@@ -129,8 +129,8 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = state.value.tipo == TipoViagem.Negocio,
-                    onClick = { viagemViewModel.updateTipo(TipoViagem.Negocio) },
+                    selected = state.value.tipo == TipoViagem.Negocio, // Verificar se o tipo selecionado é Negócio
+                    onClick = { viagemViewModel.updateTipo(TipoViagem.Negocio) }, // Atualizar o tipo para Negócio
                     modifier = Modifier
                         .weight(0.5f)
                 )
@@ -158,16 +158,16 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
 
                 Row {
 
-                    if (showDatePickerDialogInicio.value) {
+                    if (showDatePickerDialogDtIni.value) {
                         DatePickerDialog(
-                            onDismissRequest = { showDatePickerDialogInicio.value = false },
+                            onDismissRequest = { showDatePickerDialogDtIni.value = false }, // Fechar o DatePicker
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        datePickerStateInicio.value.selectedDateMillis?.let { millis ->
-                                            viagemViewModel.updateDtIni(Date(millis))
+                                        datePickerStateDtIni.value.selectedDateMillis?.let { millis ->
+                                            viagemViewModel.updateDtIni(Date(millis)) // Atualizar a data de início no ViewModel
                                         }
-                                        showDatePickerDialogInicio.value = false
+                                        showDatePickerDialogDtIni.value = false // Fechar o DatePicker
                                     }) {
                                     Text(text = "Escolher data")
                                 }
@@ -175,22 +175,22 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
                             modifier = Modifier
                                 .weight(4f)
                         ) {
-                            DatePicker(state = datePickerStateInicio.value)
+                            DatePicker(state = datePickerStateDtIni.value) // DatePicker para selecionar a data de início
                         }
                     }
 
                     OutlinedTextField(
                         value = state.value.dtIni?.time?.toBrazilianDateFormat() ?: "",
-                        onValueChange = { /* Não precisamos atualizar aqui, pois o DatePicker faz isso */ },
+                        onValueChange = { /*Campo de atualização -> feito pelo DatePicker */ },
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxWidth()
                             .onFocusChanged {
                                 if (it.isFocused) {
-                                    showDatePickerDialogInicio.value = true
+                                    showDatePickerDialogDtIni.value = true // Abrir o DatePicker ao focar
                                 }
                             },
-                        readOnly = true
+                        readOnly = true // Campo de leitura somente
                     )
 
                 }
@@ -209,16 +209,16 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
 
                 Row {
 
-                    if (showDatePickerDialogFinal.value) {
+                    if (showDatePickerDialogDtFim.value) {
                         DatePickerDialog(
-                            onDismissRequest = { showDatePickerDialogFinal.value = false },
+                            onDismissRequest = { showDatePickerDialogDtFim.value = false }, // Fechar o DatePicker
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        datePickerStateFinal.value.selectedDateMillis?.let { millis ->
+                                        datePickerStateDtFim.value.selectedDateMillis?.let { millis ->
                                             viagemViewModel.updateDtFim(Date(millis))
                                         }
-                                        showDatePickerDialogFinal.value = false
+                                        showDatePickerDialogDtFim.value = false
                                     }) {
                                     Text(text = "Escolher data")
                                 }
@@ -226,22 +226,22 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
                             modifier = Modifier
                                 .weight(4f)
                         ) {
-                            DatePicker(state = datePickerStateFinal.value)
+                            DatePicker(state = datePickerStateDtFim.value)
                         }
                     }
 
                     OutlinedTextField(
                         value = state.value.dtIni?.time?.toBrazilianDateFormat() ?: "",
-                        onValueChange = { /* Não precisamos atualizar aqui, pois o DatePicker faz isso */ },
+                        onValueChange = { /* Campo de atualização -> feito pelo DatePicker */ },
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxWidth()
                             .onFocusChanged {
                                 if (it.isFocused) {
-                                    showDatePickerDialogFinal.value = true
+                                    showDatePickerDialogDtFim.value = true
                                 }
                             },
-                        readOnly = true
+                        readOnly = true // Campo de leitura somente
                     )
 
                 }
@@ -290,7 +290,7 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
         }
     }
 
-
+// Formatar a data para o padrão brasileiro
     fun Long.toBrazilianDateFormat(
         pattern: String = "dd/MM/yyyy"
     ): String {

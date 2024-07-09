@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.prjfinalmobile"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.prjfinalmobile"
