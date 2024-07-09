@@ -38,7 +38,6 @@ fun frmCadastrarUsuario(
         val usuViewModel: UsuarioViewModel = viewModel(
             factory = UsuarioViewModelFatory(db)
         )
-
         val loginState = usuViewModel.usuState.collectAsState()
         val passState = usuViewModel.usuState.collectAsState()
         val emailState = usuViewModel.usuState.collectAsState()

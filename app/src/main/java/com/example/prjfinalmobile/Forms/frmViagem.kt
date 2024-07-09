@@ -49,6 +49,7 @@ import com.example.prjfinalmobile.Viewmodel.ViagemViewModel
 import com.example.prjfinalmobile.Viewmodel.ViagemViewModelFatory
 import java.util.Date
 
+// metodo vazio para ser passado no startDestination
 fun frmViagemList(){
 
 }
@@ -60,16 +61,16 @@ fun frmViagem(){
     val viagemViewModel: ViagemViewModel = viewModel(
         factory = ViagemViewModelFatory(db)
     )
-    val ListaViagens = viagemViewModel.viagemDao.getAll().collectAsState(initial = emptyList())
+    val ListaViagens = viagemViewModel.viagemDao.getAll().collectAsState(initial = emptyList()) // lista de viagens
 
     val navController = rememberNavController()
-    val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
-    val showFab = currentBackStackEntry?.destination?.route == "frmViagemList"
+    val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry) // Entrada atual da pilha de navegação
+    val showFab = currentBackStackEntry?.destination?.route == "frmViagemList" // Mostrar botão flutuante apenas na tela de lista de viagens
     Scaffold(
         floatingActionButton = {
             if (showFab){
                 FloatingActionButton(onClick = {
-                    navController.navigate("frmCadViagens/${-1L}")
+                    navController.navigate("frmCadViagens/${-1L}") // Navegar para a tela de cadastro de viagens com ID -1
                 }) {
                     Icon(imageVector = Icons.Default.Add,
                         contentDescription = null)
@@ -87,7 +88,7 @@ fun frmViagem(){
                     val viagemId = backStackEntry.arguments?.getLong("viagemId")
                     frmCadViagens(
                         onBack = {navController.navigateUp()},
-                        viagemId = if (viagemId != -1L) viagemId else null
+                        viagemId = if (viagemId != -1L) viagemId else null // Passar o ID da viagem ou null
                     )
                 }
                 composable("frmViagemList") {
@@ -97,10 +98,10 @@ fun frmViagem(){
             LazyColumn {
                 items(items = ListaViagens.value){
                     ViagemCard(it, onDelete = {
-                        viagemViewModel.delete(it)
+                        viagemViewModel.delete(it) // Deletar a viagem
                     },
                         onEdit = {
-                            navController.navigate("frmCadViagens/${it.id}")
+                            navController.navigate("frmCadViagens/${it.id}") // Navegar para a tela de edição de viagens com o ID da viagem
                         })
                 }
             }
@@ -121,10 +122,10 @@ fun ViagemCard(loViagem: Viagem, onDelete: () -> Unit, onEdit: () -> Unit){
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    onEdit()
+                    onEdit() //se clicar no card -> edita a viagem
                 },
                 onLongClick = {
-                    onDelete()
+                    onDelete() //se der um clique longo - exclui
                 }
             )
     ) {

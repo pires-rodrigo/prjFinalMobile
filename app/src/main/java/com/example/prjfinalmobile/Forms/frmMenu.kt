@@ -34,6 +34,7 @@ import com.example.prjfinalmobile.Viewmodel.UsuarioViewModel
 import com.example.prjfinalmobile.Viewmodel.UsuarioViewModelFatory
 import kotlin.system.exitProcess
 
+// Função privada para verificar se a rota atual está selecionada
 private fun isSelected(currentDestination: NavDestination?, route:String): Boolean {
     return currentDestination?.hierarchy?.any {it.route == route} == true
 }
@@ -53,14 +54,14 @@ fun frmHome(id: String){
         )
 
 
-        LaunchedEffect(id) {
+        LaunchedEffect(id) {//método para encontar o usuário pelo ID
             if (id.isNotEmpty()) {
                 val user = usuarioViewModel.findById(id.toLong())
                 user?.let { usuarioViewModel.setUiState(user) }
             }
         }
 
-        val state = usuarioViewModel.usuState.collectAsState()
+        val usuState = usuarioViewModel.usuState.collectAsState()
 
         Column(
             modifier = Modifier
@@ -71,7 +72,7 @@ fun frmHome(id: String){
 
             Row {
                 Text(
-                    text = "Bem-vindo: " + state.value.login,
+                    text = "Bem-vindo: " + usuState.value.login,
                     fontSize = 34.sp
                 )
             }
@@ -86,8 +87,8 @@ fun frmMenu(id: String)
 
     Scaffold (
         bottomBar = {
-            val navBackStackEntry = navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.value?.destination
+            val navBackStackEntry = navController.currentBackStackEntryAsState() // Entrada atual da pilha de navegação
+            val currentDestination = navBackStackEntry?.value?.destination // Destino atual
 
             BottomNavigation {
 
@@ -155,5 +156,5 @@ fun frmMenu(id: String)
 @Preview(showBackground = true)
 @Composable
 fun PreviewMenu() {
-    frmMenu("")
+    frmMenu("") // Chamando o Composable do menu com um ID vazio
 }
