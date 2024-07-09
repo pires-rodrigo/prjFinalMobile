@@ -12,24 +12,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.prjfinalmobile.DataBase.SystemDataBase
 import com.example.prjfinalmobile.Viewmodel.UsuarioViewModel
+import com.example.prjfinalmobile.Viewmodel.UsuarioViewModelFatory
 
 @Composable
 fun frmCadastrarUsuario(
-    onBack: () -> Unit,
-    usuViewModel: UsuarioViewModel = viewModel()
+    onBack: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
 
     ) {
+
+        val context = LocalContext.current
+        val db = SystemDataBase.getDataBase(context)
+        val usuViewModel: UsuarioViewModel = viewModel(
+            factory = UsuarioViewModelFatory(db)
+        )
 
         val loginState = usuViewModel.usuState.collectAsState()
         val passState = usuViewModel.usuState.collectAsState()
@@ -122,7 +130,9 @@ fun frmCadastrarUsuario(
 
         Row {
             Button(
-                onClick = { onBack() },
+                onClick = {
+                    usuViewModel.save()
+                    onBack() },
                 modifier = Modifier
                     .padding(start = 127.dp, top = 25.dp)
 

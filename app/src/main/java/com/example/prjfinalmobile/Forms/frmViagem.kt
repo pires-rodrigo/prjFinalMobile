@@ -64,12 +64,12 @@ fun frmViagem(){
 
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
-    val showFab = currentBackStackEntry?.destination?.route == "dest"
+    val showFab = currentBackStackEntry?.destination?.route == "frmViagemList"
     Scaffold(
         floatingActionButton = {
             if (showFab){
                 FloatingActionButton(onClick = {
-                    navController.navigate("frmCadastrarViagem/${-1L}")
+                    navController.navigate("frmCadViagens/${-1L}")
                 }) {
                     Icon(imageVector = Icons.Default.Add,
                         contentDescription = null)
@@ -82,7 +82,7 @@ fun frmViagem(){
                 navController = navController,
                 startDestination = "frmViagemList"
             ) {
-                composable("frmCadastrarViagem/{viagemId}",
+                composable("frmCadViagens/{viagemId}",
                     arguments = listOf(navArgument("viagemId") { type = NavType.LongType; defaultValue = -1L })) { backStackEntry ->
                     val viagemId = backStackEntry.arguments?.getLong("viagemId")
                     frmCadViagens(
@@ -90,7 +90,7 @@ fun frmViagem(){
                         viagemId = if (viagemId != -1L) viagemId else null
                     )
                 }
-                composable("dest") {
+                composable("frmViagemList") {
                     frmViagemList()
                 }
             }
@@ -100,7 +100,7 @@ fun frmViagem(){
                         viagemViewModel.delete(it)
                     },
                         onEdit = {
-                            navController.navigate("cadastroViagens/${it.id}")
+                            navController.navigate("frmCadViagens/${it.id}")
                         })
                 }
             }

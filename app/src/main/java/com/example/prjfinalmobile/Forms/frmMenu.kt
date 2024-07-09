@@ -52,9 +52,12 @@ fun frmHome(id: String){
             factory = UsuarioViewModelFatory(db)
         )
 
+
         LaunchedEffect(id) {
-            val user = usuarioViewModel.findById(id.toLong())
-            user?.let { usuarioViewModel.setUiState(it) }
+            if (id.isNotEmpty()) {
+                val user = usuarioViewModel.findById(id.toLong())
+                user?.let { usuarioViewModel.setUiState(user) }
+            }
         }
 
         val state = usuarioViewModel.usuState.collectAsState()
@@ -89,8 +92,8 @@ fun frmMenu(id: String)
             BottomNavigation {
 
                 BottomNavigationItem(
-                    selected = isSelected(currentDestination, "home"),
-                    onClick = { navController.navigate("home") },
+                    selected = isSelected(currentDestination, "frmHome"),
+                    onClick = { navController.navigate("frmHome") },
                     icon = {
                         Icon(
                             imageVector = Icons.Filled.Home,
@@ -100,8 +103,8 @@ fun frmMenu(id: String)
                 )
 
                 BottomNavigationItem(
-                    selected = isSelected(currentDestination, "viagem"),
-                    onClick = { navController.navigate("viagem") },
+                    selected = isSelected(currentDestination, "frmViagem"),
+                    onClick = { navController.navigate("frmViagem") },
                     icon = {
                         Icon(
                             imageVector = Icons.Filled.Person,
@@ -111,8 +114,8 @@ fun frmMenu(id: String)
                 )
 
                 BottomNavigationItem(
-                    selected = isSelected(currentDestination, "sobre"),
-                    onClick = { navController.navigate("sobre") },
+                    selected = isSelected(currentDestination, "frmSobre"),
+                    onClick = { navController.navigate("frmSobre") },
                     icon = {
                         Icon(
                             imageVector = Icons.Filled.Settings,

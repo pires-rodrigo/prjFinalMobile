@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit, usuViewModel: UsuarioViewModel = viewModel()){
+fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit){
 
     val snackbarHostState = remember {
         SnackbarHostState()
@@ -62,7 +62,7 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit, usuView
         ) {
             val context = LocalContext.current
             val db = SystemDataBase.getDataBase(context)
-            val usuarioViewModel: UsuarioViewModel = viewModel(
+            val usuViewModel: UsuarioViewModel = viewModel(
                 factory = UsuarioViewModelFatory(db)
             )
 
@@ -108,9 +108,9 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit, usuView
 
             OutlinedTextField(
                 value = passState.value.senha,
-                onValueChange = { usuarioViewModel.updateSenha(it) },
+                onValueChange = { usuViewModel.updateSenha(it) },
                 label = {
-                    Text(text = "Password")
+                    Text(text = "Senha")
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password
@@ -143,9 +143,9 @@ fun frmLogin(onCadastrarUsuario: ()->Unit, onLogin: (id: String) ->Unit, usuView
             Button(
                 onClick = {
                     MainScope().launch {
-                        val pass = usuarioViewModel.findByLogin(
-                            usuarioViewModel.usuState.value.login,
-                            usuarioViewModel.usuState.value.senha
+                        val pass = usuViewModel.findByLogin(
+                            usuViewModel.usuState.value.login,
+                            usuViewModel.usuState.value.senha
                         )
 
                         if (pass != null) {
