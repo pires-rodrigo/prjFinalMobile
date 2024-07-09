@@ -39,10 +39,10 @@ import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun frmCadViagens(onBack: ()->Unit, viagemId : Long?){
+fun frmCadViagens(onBack: ()->Unit, viagemId : Long?) {
     Scaffold(
         topBar = {
-            MyTopBar("Cadastrar viagem"){onBack()}
+            MyTopBar("Cadastrar viagem") { onBack() }
         }
     ) { it ->
         val context = LocalContext.current
@@ -53,10 +53,12 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?){
         val state = viagemViewModel.uiState.collectAsState()
 
         val showDatePickerDialogInicio = remember { mutableStateOf(false) }
-        val datePickerStateInicio = remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) }
+        val datePickerStateInicio =
+            remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) }
 
         val showDatePickerDialogFinal = remember { mutableStateOf(false) }
-        val datePickerStateFinal = remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) }
+        val datePickerStateFinal =
+            remember { mutableStateOf(DatePickerState(CalendarLocale("PT-BR"))) }
 
         Column(
             modifier = Modifier
@@ -98,7 +100,6 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?){
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 RadioButton(
                     selected = state.value.tipo == TipoViagem.Lazer,
                     onClick = { viagemViewModel.updateTipo(TipoViagem.Lazer) },
@@ -113,10 +114,14 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?){
                     modifier = Modifier
                         .weight(1.5f)
                 )
+            }
 
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 RadioButton(
-                    selected = state.value.tipo != TipoViagem.Negocio,
-                    onClick = { viagemViewModel.updateTipo(TipoViagem.Negocio)},
+                    selected = state.value.tipo == TipoViagem.Negocio,
+                    onClick = { viagemViewModel.updateTipo(TipoViagem.Negocio) },
                     modifier = Modifier
                         .weight(0.5f)
                 )
@@ -127,166 +132,164 @@ fun frmCadViagens(onBack: ()->Unit, viagemId : Long?){
                     textAlign = TextAlign.Left,
                     modifier = Modifier
                         .weight(1.5f)
-
                 )
             }
 
-            Row {
+                Row {
 
-                Text(
-                    text = "Data Inicio",
-                    fontSize = 22.sp,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier
-                        .weight(1.5f)
-                        .padding(top = 16.dp)
-                )
-            }
+                    Text(
+                        text = "Data Inicio",
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .padding(top = 16.dp)
+                    )
+                }
 
-            Row {
+                Row {
 
-                if (showDatePickerDialogInicio.value) {
-                    DatePickerDialog(
-                        onDismissRequest = { showDatePickerDialogInicio.value = false },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    datePickerStateInicio.value.selectedDateMillis?.let { millis ->
-                                        viagemViewModel.updateDtIni(Date(millis))
-                                    }
-                                    showDatePickerDialogInicio.value = false
-                                }) {
-                                Text(text = "Escolher data")
-                            }
-                        },
+                    if (showDatePickerDialogInicio.value) {
+                        DatePickerDialog(
+                            onDismissRequest = { showDatePickerDialogInicio.value = false },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        datePickerStateInicio.value.selectedDateMillis?.let { millis ->
+                                            viagemViewModel.updateDtIni(Date(millis))
+                                        }
+                                        showDatePickerDialogInicio.value = false
+                                    }) {
+                                    Text(text = "Escolher data")
+                                }
+                            },
+                            modifier = Modifier
+                                .weight(4f)
+                        ) {
+                            DatePicker(state = datePickerStateInicio.value)
+                        }
+                    }
+
+                    OutlinedTextField(
+                        value = state.value.dtIni?.time?.toBrazilianDateFormat() ?: "",
+                        onValueChange = { /* Não precisamos atualizar aqui, pois o DatePicker faz isso */ },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    showDatePickerDialogInicio.value = true
+                                }
+                            },
+                        readOnly = true
+                    )
+
+                }
+
+                Row {
+
+                    Text(
+                        text = "Data Final",
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .padding(top = 16.dp)
+                    )
+                }
+
+                Row {
+
+                    if (showDatePickerDialogFinal.value) {
+                        DatePickerDialog(
+                            onDismissRequest = { showDatePickerDialogFinal.value = false },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        datePickerStateFinal.value.selectedDateMillis?.let { millis ->
+                                            viagemViewModel.updateDtFim(Date(millis))
+                                        }
+                                        showDatePickerDialogFinal.value = false
+                                    }) {
+                                    Text(text = "Escolher data")
+                                }
+                            },
+                            modifier = Modifier
+                                .weight(4f)
+                        ) {
+                            DatePicker(state = datePickerStateFinal.value)
+                        }
+                    }
+
+                    OutlinedTextField(
+                        value = state.value.dtIni?.time?.toBrazilianDateFormat() ?: "",
+                        onValueChange = { /* Não precisamos atualizar aqui, pois o DatePicker faz isso */ },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    showDatePickerDialogFinal.value = true
+                                }
+                            },
+                        readOnly = true
+                    )
+
+                }
+
+                Row {
+
+                    Text(
+                        text = "Orçamento",
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .padding(top = 16.dp)
+                    )
+                }
+
+                Row {
+                    OutlinedTextField(
+                        value = state.value.orcamento?.toString() ?: "",
+                        onValueChange = { viagemViewModel.updateOrcamento(it.toFloat()) },
                         modifier = Modifier
                             .weight(4f)
+                            .padding(top = 10.dp)
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = {
+                            viagemViewModel.save()
+                            Toast.makeText(context, "Viagem salva!", Toast.LENGTH_SHORT).show()
+                            onBack()
+                        },
+                        modifier = Modifier
+                            .padding(top = 35.dp)
+                            .weight(2f)
                     ) {
-                        DatePicker(state = datePickerStateInicio.value)
+                        Text(text = "Salvar")
                     }
                 }
 
-                OutlinedTextField(
-                    value = state.value.dtIni?.time?.toBrazilianDateFormat() ?: "",
-                    onValueChange = { /* Não precisamos atualizar aqui, pois o DatePicker faz isso */ },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .onFocusChanged {
-                            if (it.isFocused) {
-                                showDatePickerDialogInicio.value = true
-                            }
-                        },
-                    readOnly = true
-                )
-
-            }
-
-            Row {
-
-                Text(
-                    text = "Data Final",
-                    fontSize = 22.sp,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier
-                        .weight(1.5f)
-                        .padding(top = 16.dp)
-                )
-            }
-
-            Row {
-
-                if (showDatePickerDialogFinal.value) {
-                    DatePickerDialog(
-                        onDismissRequest = { showDatePickerDialogFinal.value = false },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    datePickerStateFinal.value.selectedDateMillis?.let { millis ->
-                                        viagemViewModel.updateDtFim(Date(millis))
-                                    }
-                                    showDatePickerDialogFinal.value = false
-                                }) {
-                                Text(text = "Escolher data")
-                            }
-                        },
-                        modifier = Modifier
-                            .weight(4f)
-                    ) {
-                        DatePicker(state = datePickerStateFinal.value)
-                    }
-                }
-
-                OutlinedTextField(
-                    value = state.value.dtFim?.time?.toBrazilianDateFormat() ?: "",
-                    onValueChange = { /* Não precisamos atualizar aqui, pois o DatePicker faz isso */ },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .onFocusChanged {
-                            if (it.isFocused) {
-                                showDatePickerDialogFinal.value = true
-                            }
-                        },
-                    readOnly = true
-                )
-
-            }
-
-            Row {
-
-                Text(
-                    text = "Orçamento",
-                    fontSize = 22.sp,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier
-                        .weight(1.5f)
-                        .padding(top = 16.dp)
-                )
-            }
-
-            Row {
-                OutlinedTextField(
-                    value = state.value.orcamento?.toString() ?: "",
-                    onValueChange = { viagemViewModel.updateOrcamento(it.toFloat()) },
-                    modifier = Modifier
-                        .weight(4f)
-                        .padding(top = 10.dp)
-                )
-            }
-
-            Row (
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Button(
-                    onClick = {
-                        viagemViewModel.save()
-                        Toast.makeText(context, "Viagem salva!", Toast.LENGTH_SHORT).show()
-                        onBack() },
-                    modifier = Modifier
-                        .padding(top = 35.dp)
-                        .weight(2f)
-                ){
-                    Text(text = "Salvar")
-                }
             }
 
         }
-
     }
-}
 
 
-
-
-fun Long.toBrazilianDateFormat(
-    pattern: String = "dd/MM/yyyy"
-): String {
-    val date = Date(this)
-    val formatter = SimpleDateFormat(
-        pattern, Locale("pt-br")
-    ).apply {
-        timeZone = TimeZone.getTimeZone("GMT")
+    fun Long.toBrazilianDateFormat(
+        pattern: String = "dd/MM/yyyy"
+    ): String {
+        val date = Date(this)
+        val formatter = SimpleDateFormat(
+            pattern, Locale("pt-br")
+        ).apply {
+            timeZone = TimeZone.getTimeZone("GMT")
+        }
+        return formatter.format(date)
     }
-    return formatter.format(date)
-}
